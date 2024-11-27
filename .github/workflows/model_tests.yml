@@ -21,13 +21,16 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install torch torchvision tqdm matplotlib pytest torchsummary
+        pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+        pip install pytest torchsummary
     
     - name: Download model weights
       run: |
-        # Add commands to download model weights if stored externally
-        # For now, assuming weights are in the repository
+        if [ ! -f "best_mnist_model.pth" ]; then
+          echo "Error: Model weights file not found"
+          exit 1
+        fi
         
     - name: Run tests
       run: |
-        pytest test_mnist_model.py -v 
+        pytest test_mnist_model.py -v

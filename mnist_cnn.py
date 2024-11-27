@@ -71,13 +71,13 @@ class TinyCNN(nn.Module):
             nn.MaxPool2d(2)  # RF: 20x20, Size: 7x7
         )
         
-        # Fourth Convolutional Block
+        # Fourth Convolutional Block - Reduced channels from 20 to 18
         self.conv4 = nn.Sequential(
-            nn.Conv2d(16, 20, kernel_size=3, padding=1),  # RF: 28x28
-            nn.BatchNorm2d(20),
+            nn.Conv2d(16, 18, kernel_size=3, padding=1),  # RF: 28x28 (reduced from 20 to 18 channels)
+            nn.BatchNorm2d(18),
             nn.ReLU(),
             nn.Dropout2d(dropout_rate),
-            nn.Conv2d(20, 16, kernel_size=1),  # RF: 28x28 (1x1 conv)
+            nn.Conv2d(18, 16, kernel_size=1),  # RF: 28x28 (1x1 conv)
             nn.ReLU()
         )
         
@@ -188,11 +188,10 @@ def train_model(params):
     model.load_state_dict(best_model_state)
     print(f'\nLoaded best model with test accuracy: {best_test_accuracy:.2f}%')
     
-    # Save the best model to disk (modified to use weights_only=True)
+    # Save the best model to disk (modified)
     torch.save(
         best_model_state,  # Save only the model state dict
-        'best_mnist_model.pth',
-        weights_only=True  # Add this parameter
+        'best_mnist_model.pth'
     )
     
     return model, train_losses, train_accuracies, test_accuracies
@@ -296,8 +295,8 @@ def load_and_evaluate_model(model_path, params):
     # Initialize model
     model = TinyCNN(params.dropout_rate).to(device)
     
-    # Load saved model (modified to use weights_only=True)
-    model_state = torch.load(model_path, weights_only=True)
+    # Load saved model (modified)
+    model_state = torch.load(model_path)
     model.load_state_dict(model_state)
     print(f"Loaded model weights from {model_path}")
     
