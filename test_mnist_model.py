@@ -5,6 +5,11 @@ from torch.utils.data import DataLoader
 from torchsummary import summary
 import pytest
 from mnist_cnn import TinyCNN, HyperParameters, load_and_evaluate_model
+import warnings
+
+# Ignore specific warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -31,6 +36,7 @@ def test_model_architecture():
 
 def test_model_accuracy():
     params = HyperParameters()
+    device = torch.device('cpu')  # Explicitly use CPU for testing
     model, accuracy = load_and_evaluate_model('best_mnist_model.pth', params)
     assert accuracy >= 99.4, f"Model accuracy {accuracy:.2f}% is less than required 99.4%"
 

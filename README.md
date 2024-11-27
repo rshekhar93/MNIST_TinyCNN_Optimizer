@@ -7,7 +7,7 @@ A lightweight CNN model for MNIST digit classification that achieves >99.4% accu
 - 8 Convolutional layers organized in 4 blocks
 - Uses Batch Normalization and Dropout for regularization
 - Single Fully Connected layer at the end
-- Total parameters: 19,006
+- Total parameters: 19,354
 
 ### Architecture Details:
 
@@ -30,7 +30,6 @@ A lightweight CNN model for MNIST digit classification that achieves >99.4% accu
    - Final RF: 28x28 (covers entire input)
 
 4. **Parameter Efficiency**:
-   - Total parameters: 19,006
    - Strategic channel expansion/reduction
    - 1x1 convolutions for channel reduction
 

@@ -7,6 +7,11 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from torchsummary import summary
+import warnings
+
+# Ignore specific warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Hyperparameters class for easy tuning
 class HyperParameters:
@@ -71,13 +76,13 @@ class TinyCNN(nn.Module):
             nn.MaxPool2d(2)  # RF: 20x20, Size: 7x7
         )
         
-        # Fourth Convolutional Block - Reduced channels from 20 to 18
+        # Fourth Convolutional Block
         self.conv4 = nn.Sequential(
-            nn.Conv2d(16, 18, kernel_size=3, padding=1),  # RF: 28x28 (reduced from 20 to 18 channels)
-            nn.BatchNorm2d(18),
+            nn.Conv2d(16, 16, kernel_size=3, padding=1),  # RF: 28x28
+            nn.BatchNorm2d(16),
             nn.ReLU(),
             nn.Dropout2d(dropout_rate),
-            nn.Conv2d(18, 16, kernel_size=1),  # RF: 28x28 (1x1 conv)
+            nn.Conv2d(16, 16, kernel_size=1),  # RF: 28x28 (1x1 conv)
             nn.ReLU()
         )
         
@@ -179,7 +184,7 @@ def train_model(params):
         if test_accuracy > best_test_accuracy:
             best_test_accuracy = test_accuracy
             best_model_state = model.state_dict().copy()
-            print(f'New best model saved with test accuracy: {test_accuracy:.2f}%')
+            # print(f'New best model saved with test accuracy: {test_accuracy:.2f}%')
         
         # Modified metrics printing
         print(f'Epoch {epoch+1}/{params.num_epochs} - Loss: {epoch_loss:.4f}, Train Acc: {train_accuracy:.2f}%, Test Acc: {test_accuracy:.2f}%')
