@@ -36,7 +36,7 @@ def test_model_architecture():
 
 def test_model_accuracy():
     params = HyperParameters()
-    device = torch.device('cpu')  # Explicitly use CPU for testing
+    # device = torch.device('cpu')  # Explicitly use CPU for testing
     model, accuracy = load_and_evaluate_model('best_mnist_model.pth', params)
     assert accuracy >= 99.4, f"Model accuracy {accuracy:.2f}% is less than required 99.4%"
 
