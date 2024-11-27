@@ -302,8 +302,11 @@ def load_and_evaluate_model(model_path, params):
     # Initialize model
     model = TinyCNN(params.dropout_rate).to(device)
     
-    # Load saved model
-    model_state = torch.load(model_path)
+    # Load saved model with map_location
+    model_state = torch.load(
+        model_path,
+        map_location=device  # This ensures proper device mapping
+    )
     model.load_state_dict(model_state)
     model.eval()  # Set model to evaluation mode
     
