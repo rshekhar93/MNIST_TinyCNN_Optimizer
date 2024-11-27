@@ -305,10 +305,10 @@ def load_and_evaluate_model(model_path, params):
     # Load saved model with map_location
     model_state = torch.load(
         model_path,
-        map_location=device  # This ensures proper device mapping
+        map_location=device
     )
     model.load_state_dict(model_state)
-    model.eval()  # Set model to evaluation mode
+    model.eval()
     
     # Prepare test data
     transform = transforms.Compose([
@@ -316,7 +316,8 @@ def load_and_evaluate_model(model_path, params):
         transforms.Normalize((0.1307,), (0.3081,))
     ])
     
-    test_dataset = datasets.MNIST('./data', train=False, transform=transform)
+    # Added download=True to ensure dataset is available
+    test_dataset = datasets.MNIST('./data', train=False, transform=transform, download=True)
     test_loader = DataLoader(test_dataset, batch_size=params.batch_size, shuffle=False)
     
     # Evaluate
