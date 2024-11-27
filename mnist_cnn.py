@@ -17,8 +17,8 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 class HyperParameters:
     def __init__(self):
         self.num_epochs = 20
-        self.batch_size = 512  # Changed from list to single value
-        self.learning_rate = 0.001
+        self.batch_size = 64
+        self.learning_rate = 0.0009
         self.dropout_rate = 0.25
         self.num_classes = 10
         self.momentum = 0.9
@@ -139,6 +139,7 @@ def train_model(params):
     # Track best model
     best_test_accuracy = 0.0
     best_model_state = None
+    best_epoch = 0
     
     # Training loop
     for epoch in range(params.num_epochs):
@@ -184,20 +185,21 @@ def train_model(params):
         if test_accuracy > best_test_accuracy:
             best_test_accuracy = test_accuracy
             best_model_state = model.state_dict().copy()
-            # print(f'New best model saved with test accuracy: {test_accuracy:.2f}%')
+            best_epoch = epoch
+            # print(f'New best model saved at epoch {epoch+1} with test accuracy: {test_accuracy:.2f}%')
+            
+            # Save the best model to disk immediately when we find a better one
+            torch.save(
+                best_model_state,
+                'best_mnist_model.pth'
+            )
         
         # Modified metrics printing
         print(f'Epoch {epoch+1}/{params.num_epochs} - Loss: {epoch_loss:.4f}, Train Acc: {train_accuracy:.2f}%, Test Acc: {test_accuracy:.2f}%')
     
     # Load best model before returning
     model.load_state_dict(best_model_state)
-    print(f'\nLoaded best model with test accuracy: {best_test_accuracy:.2f}%')
-    
-    # Save the best model to disk (modified)
-    torch.save(
-        best_model_state,  # Save only the model state dict
-        'best_mnist_model.pth'
-    )
+    print(f'\nLoaded best model from epoch {best_epoch+1} with test accuracy: {best_test_accuracy:.2f}%')
     
     return model, train_losses, train_accuracies, test_accuracies
 
@@ -300,10 +302,10 @@ def load_and_evaluate_model(model_path, params):
     # Initialize model
     model = TinyCNN(params.dropout_rate).to(device)
     
-    # Load saved model (modified)
+    # Load saved model
     model_state = torch.load(model_path)
     model.load_state_dict(model_state)
-    print(f"Loaded model weights from {model_path}")
+    model.eval()  # Set model to evaluation mode
     
     # Prepare test data
     transform = transforms.Compose([
